@@ -2,7 +2,7 @@ bl_info = {
     "name": "Tube Creation",
     "author": "Your Name",
     "version": (1, 0),
-    "blender": (2, 80, 0),
+    "blender": (4, 2, 0),
     "description": "Create tubes with customizable properties",
     "category": "Mesh"
 }
@@ -16,10 +16,10 @@ class TubeCreationDialog(bpy.types.Operator):
     bl_label = "Create Tube"
 
     # Properties for the tube creation
-    length: FloatProperty(name="Length", default=1.0, min=0.01, max=100.0)
+    length: FloatProperty(name="Length", default=100.0, min=0.01, max=1000.0)
     angle: FloatProperty(name="Angle", default=0.0, min=-360.0, max=360.0)
-    radius: FloatProperty(name="Radius", default=0.1, min=0.01, max=10.0)
-    sides: IntProperty(name="Sides", default=12, min=3, max=64)
+    radius: FloatProperty(name="Radius", default=1.21, min=0.01, max=100.0)
+    sides: IntProperty(name="Sides", default=31, min=3, max=64)
     closed: BoolProperty(name="Closed", default=True)
 
     def draw(self, context):
@@ -34,7 +34,10 @@ class TubeCreationDialog(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        # Create the tube using the provided properties
+        # Deselect all objects
+        bpy.ops.object.select_all(action='DESELECT')
+
+        # Create the tube
         bpy.ops.mesh.primitive_cylinder_add(
             vertices=self.sides,
             radius=self.radius,
@@ -45,6 +48,28 @@ class TubeCreationDialog(bpy.types.Operator):
             scale=(1, 1, 1)
         )
 
+        # Resize the tube to add dimensions
+        bpy.ops.transform.resize(
+            value=(self.radius, self.radius, self.length),
+            orient_type='GLOBAL',
+            orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+            orient_matrix_type='GLOBAL',
+            constraint_axis=(False, False, False),
+            mirror=True,
+            use_proportional_edit=False,
+            proportional_edit_falloff='SMOOTH',
+            proportional_size=1,
+            use_proportional_connected=False,
+            use_proportional_projected=False,
+            snap=False,
+            snap_elements={'INCREMENT'},
+            use_snap_project=False,
+            snap_target='CLOSEST',
+            use_snap_self=False,
+            use_snap_edit=True,
+            use_snap_nonedit=True,
+            use_snap_selectable=False
+        )
         # Rotate the tube if an angle is provided
         if self.angle != 0.0:
             bpy.ops.transform.rotate(
@@ -59,26 +84,26 @@ class TubeCreationDialog(bpy.types.Operator):
                 proportional_edit_falloff='SMOOTH',
                 proportional_size=1,
                 use_proportional_connected=False,
-                use_proportional_projected=False
+                use_proportional_projected=False,
+                snap=False,
+                snap_elements={'INCREMENT'},
+                use_snap_project=False,
+                snap_target='CLOSEST',
+                use_snap_self=False,
+                use_snap_edit=True,
+                use_snap_nonedit=True,
+                use_snap_selectable=False
             )
 
         # Close the tube if required
         if self.closed:
             bpy.ops.object.mode_set(mode='EDIT')
-            bpy.ops.mesh.edge_select_mode(type='PERIMETER')
+            bpy.ops.mesh.select_mode(type='EDGE')
             bpy.ops.mesh.bridge_edge_loops()
             bpy.ops.object.mode_set(mode='OBJECT')
 
         return {'FINISHED'}
 
-def register():
-    bpy.utils.register_class(TubeCreationDialog)
-
-def unregister():
-    bpy.utils.unregister_class(TubeCreationDialog)
-
-if __name__ == "__main__":
- 
 # Define a panel for the tube creation operator
 class TubeCreationPanel(bpy.types.Panel):
     bl_idname = "TubeCreationPanel"
@@ -108,14 +133,4 @@ def unregister_operator():
     bpy.utils.unregister_class(TubeCreationDialog)
 
 # Register all classes
-def register():
-    register_operator()
-    register_panel()
-
-# Unregister all classes
-def unregister():
-    unregister_operator()
-    unregister_panel()
-
-if __name__ == "__main__":
-    register()
+def
