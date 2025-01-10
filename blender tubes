@@ -1,3 +1,12 @@
+bl_info = {
+    "name": "Tube Creation",
+    "author": "Your Name",
+    "version": (1, 0),
+    "blender": (2, 80, 0),
+    "description": "Create tubes with customizable properties",
+    "category": "Mesh"
+}
+
 import bpy
 from bpy.props import FloatProperty, IntProperty, BoolProperty
 
@@ -69,7 +78,7 @@ def unregister():
     bpy.utils.unregister_class(TubeCreationDialog)
 
 if __name__ == "__main__":
-    register()
+ 
 # Define a panel for the tube creation operator
 class TubeCreationPanel(bpy.types.Panel):
     bl_idname = "TubeCreationPanel"
