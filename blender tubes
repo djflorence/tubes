@@ -133,4 +133,14 @@ def unregister_operator():
     bpy.utils.unregister_class(TubeCreationDialog)
 
 # Register all classes
-def
+def register():
+    register_operator()
+    register_panel()
+
+# Unregister all classes
+def unregister():
+    unregister_operator()
+    unregister_panel()
+
+if __name__ == "__main__":
+    register()
